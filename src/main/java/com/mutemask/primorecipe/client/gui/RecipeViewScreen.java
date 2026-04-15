@@ -1,6 +1,5 @@
 package com.mutemask.primorecipe.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mutemask.primorecipe.client.gui.widget.CraftHereButton;
 import com.mutemask.primorecipe.client.gui.widget.RecipeArrowButton;
 import com.mutemask.primorecipe.client.util.InventoryHelper;
@@ -10,7 +9,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeViewScreen extends Screen {
-    private static final ResourceLocation CRAFTING_TABLE_LOCATION = ResourceLocation.parse("textures/gui/container/crafting_table.png");
+    private static final ResourceLocation CRAFTING_TABLE_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/container/crafting_table.png");
     private static final int SLOT_SIZE = 18;
     private static final int GRID_SIZE = 3;
     
@@ -39,7 +37,7 @@ public class RecipeViewScreen extends Screen {
     private int leftPos;
     private int topPos;
     private int imageWidth = 176;
-    private int imageHeight = 80; // Compact height for just the grid
+    private int imageHeight = 80;
     
     private List<RecipeHolder<CraftingRecipe>> recipes = new ArrayList<>();
     private int currentRecipeIndex = 0;
@@ -65,26 +63,23 @@ public class RecipeViewScreen extends Screen {
     protected void init() {
         super.init();
         
-        // Center the 3x3 grid
         this.leftPos = (this.width - this.imageWidth) / 2;
         this.topPos = (this.height - this.imageHeight) / 2;
         
-        // Load recipes for this item
         loadRecipes();
         
-        // Navigation arrows (only if multiple recipes)
         if (recipes.size() > 1) {
             this.leftArrow = new RecipeArrowButton(
                 this.leftPos + 10,
                 this.topPos + 30,
-                true, // left arrow
+                true,
                 button -> cycleRecipe(-1)
             );
             
             this.rightArrow = new RecipeArrowButton(
                 this.leftPos + this.imageWidth - 30,
                 this.topPos + 30,
-                false, // right arrow
+                false,
                 button -> cycleRecipe(1)
             );
             
@@ -92,7 +87,6 @@ public class RecipeViewScreen extends Screen {
             this.addRenderableWidget(rightArrow);
         }
         
-        // Back button (inside GUI)
         this.backButton = Button.builder(
             Component.literal("ESC to go back"),
             button -> goBack()
@@ -100,7 +94,6 @@ public class RecipeViewScreen extends Screen {
         
         this.addRenderableWidget(backButton);
         
-        // Craft Here button (outside GUI, below it)
         updateCraftHereButton();
         
         updateRecipeDisplay();
@@ -119,22 +112,17 @@ public class RecipeViewScreen extends Screen {
         CraftingRecipe recipe = recipes.get(currentRecipeIndex).value();
         currentIngredients = RecipeHelper.getIngredientsAsGrid(recipe, minecraft.level.registryAccess());
         
-        // Check if player has all ingredients
         isCraftable = InventoryHelper.hasAllIngredients(playerInventory, currentIngredients);
         
-        // Update craft here button visibility
         updateCraftHereButton();
     }
 
     private void updateCraftHereButton() {
-        // Remove old button if exists
         if (craftHereButton != null) {
             this.removeWidget(craftHereButton);
         }
         
-        // Only show if craftable
         if (isCraftable) {
-            // Position below the GUI (outside it)
             int buttonX = this.leftPos + (this.imageWidth - 70) / 2;
             int buttonY = this.topPos + this.imageHeight + 5;
             
@@ -142,7 +130,7 @@ public class RecipeViewScreen extends Screen {
                 buttonX,
                 buttonY,
                 70,
-                32, // 2 slots height
+                32,
                 Component.literal(""),
                 button -> onCraftHere()
             );
@@ -153,21 +141,12 @@ public class RecipeViewScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Render background
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         
-        // Render 3x3 crafting grid (centered)
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, CRAFTING_TABLE_LOCATION);
-        
-        // Draw only the crafting grid area
         guiGraphics.blit(CRAFTING_TABLE_LOCATION, this.leftPos, this.topPos, 29, 16, 116, 54);
         
-        // Draw result slot
         guiGraphics.blit(CRAFTING_TABLE_LOCATION, this.leftPos + 124, this.topPos + 18, 149, 34, 26, 26);
         
-        // Render ingredients in the 3x3 grid
         int gridStartX = this.leftPos + 30;
         int gridStartY = this.topPos + 17;
         
@@ -179,14 +158,11 @@ public class RecipeViewScreen extends Screen {
             
             ItemStack ingredient = currentIngredients.get(i);
             
-            // Check if player has this ingredient
             boolean hasIngredient = ingredient.isEmpty() || 
                 InventoryHelper.hasIngredient(playerInventory, ingredient);
             
-            // Draw slot background
             if (!ingredient.isEmpty()) {
                 if (!hasIngredient) {
-                    // Red background for missing items (like vanilla)
                     guiGraphics.fill(x - 1, y - 1, x + SLOT_SIZE + 1, y + SLOT_SIZE + 1, 0x66FF0000);
                 }
                 
@@ -195,39 +171,31 @@ public class RecipeViewScreen extends Screen {
             }
         }
         
-        // Render result item
         guiGraphics.renderItem(targetItem, this.leftPos + 131, this.topPos + 25);
         guiGraphics.renderItemDecorations(this.font, targetItem, this.leftPos + 131, this.topPos + 25);
         
-        // Render title
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, this.topPos - 15, 0xFFFFFF);
         
-        // Render recipe counter if multiple recipes
         if (recipes.size() > 1) {
             String counter = (currentRecipeIndex + 1) + "/" + recipes.size();
             guiGraphics.drawCenteredString(this.font, counter, this.width / 2, this.topPos - 5, 0xAAAAAA);
         }
         
-        // Render status messages (inside GUI, below the grid)
         renderStatusMessages(guiGraphics);
         
-        // Render widgets (arrows, buttons)
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         
-        // Render tooltips for ingredients
         renderIngredientTooltips(guiGraphics, mouseX, mouseY, gridStartX, gridStartY);
     }
 
     private void renderStatusMessages(GuiGraphics guiGraphics) {
-        int messageY = this.topPos + 58; // Below the crafting grid
+        int messageY = this.topPos + 58;
         
         if (isCraftable) {
-            // ✅ You have all the required materials! Ready to craft. (Pure Green)
             Component message = Component.literal("✅ You have all the required materials! Ready to craft.")
                 .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0x00FF00)));
             guiGraphics.drawCenteredString(this.font, message, this.width / 2, messageY, 0x00FF00);
         } else {
-            // 🔍 You are missing some materials (Pure Yellow)
             Component message = Component.literal("🔍 You are missing some materials")
                 .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xFFFF00)));
             guiGraphics.drawCenteredString(this.font, message, this.width / 2, messageY, 0xFFFF00);
@@ -252,7 +220,6 @@ public class RecipeViewScreen extends Screen {
             }
         }
         
-        // Result item tooltip
         int resultX = this.leftPos + 131;
         int resultY = this.topPos + 25;
         if (mouseX >= resultX && mouseX < resultX + SLOT_SIZE && 
@@ -277,7 +244,6 @@ public class RecipeViewScreen extends Screen {
     private void onCraftHere() {
         if (!isCraftable) return;
         
-        // Send packet to server to open crafting table with pre-filled recipe
         List<ItemStack> ingredients = new ArrayList<>();
         for (ItemStack stack : currentIngredients) {
             ingredients.add(stack.copy());
@@ -285,7 +251,6 @@ public class RecipeViewScreen extends Screen {
         
         ClientPlayNetworking.send(new OpenCraftingTablePacket(ingredients));
         
-        // Close this screen and open vanilla crafting screen
         minecraft.setScreen(null);
     }
 
