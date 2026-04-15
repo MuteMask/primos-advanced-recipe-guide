@@ -3,20 +3,18 @@ package com.mutemask.primorecipe.client.gui.widget;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
 public class SearchBarWidget extends EditBox {
-    private static final ResourceLocation SEARCH_BAR_TEXTURE = ResourceLocation.parse("textures/gui/container/creative_inventory/tab_item_search.png");
+    private static final ResourceLocation SEARCH_BAR_TEXTURE = ResourceLocation.withDefaultNamespace("textures/gui/container/creative_inventory/tab_item_search.png");
     private static final int TEXT_COLOR = 0xFFFFFF;
     private static final int PLACEHOLDER_COLOR = 0xAAAAAA;
     
     private final Consumer<String> onTextChanged;
     private final Component placeholder;
-    private boolean isExpanded = false;
 
     public SearchBarWidget(Font font, int x, int y, int width, int height, 
                           Component placeholder, Consumer<String> onTextChanged) {
@@ -39,11 +37,7 @@ public class SearchBarWidget extends EditBox {
         if (!this.visible) return;
         
         // Render search bar background (vanilla style)
-        RenderType renderType = RenderType.guiTextured(SEARCH_BAR_TEXTURE);
-        
-        // Draw the search bar background stretched to our width
-        guiGraphics.blit(renderType, SEARCH_BAR_TEXTURE, this.getX(), this.getY(), 
-                        0, 0, this.width, this.height, this.width, this.height);
+        guiGraphics.blit(SEARCH_BAR_TEXTURE, this.getX(), this.getY(), 0, 0, this.width, this.height, this.width, this.height);
         
         // Render the text or placeholder
         String text = this.getValue();
@@ -77,10 +71,8 @@ public class SearchBarWidget extends EditBox {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        // Call the parent to handle text input
         boolean result = super.keyPressed(keyCode, scanCode, modifiers);
         
-        // Notify listener of text change
         if (onTextChanged != null) {
             onTextChanged.accept(this.getValue());
         }
@@ -112,7 +104,6 @@ public class SearchBarWidget extends EditBox {
         boolean wasFocused = this.isFocused();
         boolean result = super.mouseClicked(mouseX, mouseY, button);
         
-        // Must be clicked manually to focus
         if (!wasFocused && this.isFocused()) {
             this.setCursorPosition(this.getValue().length());
         }
