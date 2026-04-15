@@ -1,0 +1,17 @@
+{
+  "mod.primorecipe.name": "Primo's Advanced Recipe Guide",
+  "mod.primorecipe.description": "A client-side recipe guide with advanced search functionality",
+  
+  "gui.primorecipe.search_placeholder": "Search 🔍",
+  "gui.primorecipe.search_results": "Search Results",
+  "gui.primorecipe.recipe_view": "Recipe View",
+  "gui.primorecipe.craft_here": "Craft Here",
+  "gui.primorecipe.items_found": "%d items found",
+  
+  "message.primorecipe.has_materials": "✅ You have all the required materials! Ready to craft.",
+  "message.primorecipe.missing_materials": "🔍 You are missing some materials",
+  
+  "tooltip.primorecipe.click_to_view": "Click to view recipe",
+  "tooltip.primorecipe.cycle_recipe": "Click to cycle recipes",
+  "tooltip.primorecipe.craft_here_desc": "Click to open crafting table with recipe pre-filled"
+}
