@@ -15,6 +15,7 @@ repositories {
     maven { url "https://maven.fabricmc.net/" }
     maven { url "https://maven.minecraftforge.net/" }
     maven { url "https://maven.parchmentmc.org" }
+    maven { url "https://maven.terraformersmc.com/" } // Add TerraformersMC repo for ModMenu
 }
 
 dependencies {
@@ -24,11 +25,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:0.18.4"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.138.4+1.21.10"
     
+    // ModMenu for 1.21.10 (version 16.0.0 or 16.0.1)
+    modImplementation "com.terraformersmc:modmenu:16.0.0"
+    
     // For network packets
     modImplementation "io.netty:netty-buffer:4.1.97.Final"
-    
-    // For configuration (optional but recommended)
-    modImplementation "com.terraformersmc:modmenu:13.0.0"
 }
 
 processResources {
@@ -58,7 +59,6 @@ jar {
     }
 }
 
-// Configure the maven publication
 publishing {
     publications {
         mavenJava(MavenPublication) {
