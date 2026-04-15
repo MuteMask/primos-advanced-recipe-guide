@@ -16,7 +16,7 @@ public record OpenCraftingTablePacket(List<ItemStack> ingredients) implements Cu
     );
     
     public static final StreamCodec<RegistryFriendlyByteBuf, OpenCraftingTablePacket> STREAM_CODEC = StreamCodec.composite(
-        ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()),
+        ByteBufCodecs.collection(ArrayList::new, ItemStack.OPTIONAL_STREAM_CODEC),
         OpenCraftingTablePacket::ingredients,
         OpenCraftingTablePacket::new
     );
