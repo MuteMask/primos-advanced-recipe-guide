@@ -1,11 +1,9 @@
 package com.mutemask.primorecipe.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mutemask.primorecipe.client.gui.widget.ItemResultWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemSearchScreen extends Screen {
-    private static final ResourceLocation RECIPE_BOOK_LOCATION = ResourceLocation.parse("textures/gui/recipe_book.png");
+    private static final ResourceLocation RECIPE_BOOK_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private static final int GRID_COLUMNS = 5;
     private static final int GRID_ROWS = 4;
     private static final int SLOT_SIZE = 25;
@@ -45,22 +43,17 @@ public class ItemSearchScreen extends Screen {
         this.searchQuery = searchQuery;
         this.matchingItems = matchingItems;
         this.parentScreen = parentScreen;
-        this.imageWidth = 176;
-        this.imageHeight = 166;
     }
 
     @Override
     protected void init() {
         super.init();
         
-        // Center the grid
         this.leftPos = (this.width - GRID_WIDTH) / 2;
         this.topPos = (this.height - GRID_HEIGHT) / 2;
         
-        // Create item widgets
         updateItemWidgets();
         
-        // Back button (ESC functionality)
         this.backButton = Button.builder(
             Component.literal("ESC to go back"),
             button -> goBack()
@@ -95,15 +88,8 @@ public class ItemSearchScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        // Render background
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         
-        // Render grid background (vanilla recipe book style)
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, RECIPE_BOOK_LOCATION);
-        
-        // Draw grid background
         for (int row = 0; row < GRID_ROWS; row++) {
             for (int col = 0; col < GRID_COLUMNS; col++) {
                 int x = this.leftPos + col * SLOT_SIZE;
@@ -112,17 +98,13 @@ public class ItemSearchScreen extends Screen {
             }
         }
         
-        // Render title
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, this.topPos - 20, 0xFFFFFF);
         
-        // Render item count
         String countText = matchingItems.size() + " items found";
         guiGraphics.drawCenteredString(this.font, countText, this.width / 2, this.topPos - 10, 0xAAAAAA);
         
-        // Render widgets
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         
-        // Render tooltips
         for (ItemResultWidget widget : itemWidgets) {
             if (widget.isMouseOver(mouseX, mouseY)) {
                 guiGraphics.renderTooltip(this.font, widget.getItemStack(), mouseX, mouseY);
@@ -132,7 +114,6 @@ public class ItemSearchScreen extends Screen {
     }
 
     private void onItemSelected(ItemStack item) {
-        // Transition to recipe view screen
         minecraft.setScreen(new RecipeViewScreen(
             menu,
             playerInventory,
