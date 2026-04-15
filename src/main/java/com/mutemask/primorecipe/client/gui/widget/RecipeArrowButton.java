@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class RecipeArrowButton extends Button {
-    private static final ResourceLocation RECIPE_BOOK_LOCATION = ResourceLocation.parse("textures/gui/recipe_book.png");
+    private static final ResourceLocation RECIPE_BOOK_LOCATION = ResourceLocation.withDefaultNamespace("textures/gui/recipe_book.png");
     private final boolean isLeft;
     
     public RecipeArrowButton(int x, int y, boolean isLeft, OnPress onPress) {
@@ -21,13 +21,11 @@ public class RecipeArrowButton extends Button {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
         
-        // Arrow texture coordinates in recipe_book.png
         int u = isLeft ? 0 : 20;
         int v = this.isHovered ? 20 : 0;
         
         guiGraphics.blit(RECIPE_BOOK_LOCATION, this.getX(), this.getY(), u, v, 20, 20);
         
-        // Highlight when hovered
         if (this.isHovered) {
             guiGraphics.fill(this.getX(), this.getY(), 
                            this.getX() + 20, this.getY() + 20, 
