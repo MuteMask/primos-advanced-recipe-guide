@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "primorecipe",
+  "version": "${version}",
+  "name": "Primo's Advanced Recipe Guide",
+  "description": "A client-side recipe guide with advanced search functionality for crafting tables. Features real-time item search, recipe preview with craftability detection, and one-click crafting.",
+  "authors": [
+    "MuteMask"
+  ],
+  "contact": {
+    "homepage": "https://github.com/MuteMask/primos-advanced-recipe-guide",
+    "sources": "https://github.com/MuteMask/primos-advanced-recipe-guide",
+    "issues": "https://github.com/MuteMask/primos-advanced-recipe-guide/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/primorecipe/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.mutemask.primorecipe.client.PrimoRecipeClient"
+    ],
+    "main": [
+      "com.mutemask.primorecipe.PrimoRecipeMod"
+    ]
+  },
+  "mixins": [
+    "primorecipe.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "fabric": ">=0.138.4",
+    "minecraft": ">=1.21.10",
+    "java": ">=21"
+  },
+  "suggests": {
+    "modmenu": ">=13.0.0"
+  }
+}
