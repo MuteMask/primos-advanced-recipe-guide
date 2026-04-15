@@ -1,0 +1,20 @@
+{
+  "search.type": {
+    "sounds": [
+      "minecraft:block.note_block.hat"
+    ],
+    "subtitle": "subtitles.primorecipe.search_type"
+  },
+  "item.select": {
+    "sounds": [
+      "minecraft:ui.button.click"
+    ],
+    "subtitle": "subtitles.primorecipe.item_select"
+  },
+  "recipe.open": {
+    "sounds": [
+      "minecraft:block.chest.open"
+    ],
+    "subtitle": "subtitles.primorecipe.recipe_open"
+  }
+}
